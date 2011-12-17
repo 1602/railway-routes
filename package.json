@@ -1,0 +1,21 @@
+{
+  "author": "Anatoliy Chakkaev",
+  "name": "railway-routes",
+  "description": "Resourceful routing for ExpressJS, ruby-on-rails 2 style",
+  "tags": "express, routing, ror, rails, railway",
+  "version": "0.0.1",
+  "homepage": "http://railwajs.com/routing.html",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/1602/railway-routes.git"
+  },
+  "main": "lib/railway-routes.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "engines": {
+    "node": ">= 0.4.0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
