@@ -6,7 +6,7 @@ This is simple routing for ExpressJS framework. It allows you to write routes in
 
 After creating app instead of writing code like `app.get('smth', doSmth);` generate routes like that:
 
-    var map = require('railway-routes').Map(app, handler);
+    var map = new require('railway-routes').Map(app, handler);
     map.resources('posts');
     map.namespace('admin', function (admin) {
        admin.resources('users');
@@ -49,6 +49,7 @@ In that case your handler should be:
 ## Features
 
 - resourceful routes
+- generic routes
 - url helpers
 - namespaces
 - custom helper names / paths for resources
@@ -57,3 +58,11 @@ In that case your handler should be:
 
 http://railwayjs.com/routing.html
 
+## Example app
+
+Check out example app to deal with middleware, route handling, and generic routes:
+
+    git clone git://github.com/anatoliychakkaev/railway-routes-example-app.git
+    cd railway-routes-example-app
+    npm install
+    node app.js

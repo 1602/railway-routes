@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git://github.com/1602/railway-routes.git"
   },
-  "main": "lib/railway-routes.js",
+  "main": "lib/railway_routes.js",
   "scripts": {
     "test": "make test"
   },
