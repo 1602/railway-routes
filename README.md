@@ -67,4 +67,4 @@ Check out [example app][1] to deal with middleware, route handling, and generic 
     npm install
     node app.js
 
- [1]: http://github.com/anatoliychakkaev/railway-routes
+ [1]: http://github.com/anatoliychakkaev/railway-routes-example-app
