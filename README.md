@@ -60,9 +60,11 @@ http://railwayjs.com/routing.html
 
 ## Example app
 
-Check out example app to deal with middleware, route handling, and generic routes:
+Check out [example app][1] to deal with middleware, route handling, and generic routes:
 
     git clone git://github.com/anatoliychakkaev/railway-routes-example-app.git
     cd railway-routes-example-app
     npm install
     node app.js
+
+ [1]: http://github.com/anatoliychakkaev/railway-routes-example-app
