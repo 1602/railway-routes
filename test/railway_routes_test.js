@@ -122,3 +122,16 @@ it('should allow overwrite path and helper', function (test) {
     test.equal(map.pathTo.picture(1602), '/pictures/1602');
     test.done();
 });
+
+it('should handle root url', function (test) {
+    var paths = [];
+    var map = new routes.Map(fakeApp(paths), fakeBridge());
+    map.root('dashboard#home');
+    test.deepEqual(paths, [
+        [ 'GET', '/', 'dashboard#home' ]
+    ]);
+    test.equal(map.pathTo.root, '/');
+    test.equal(map.pathTo.root(), '/');
+    test.done();
+});
+
