@@ -135,3 +135,14 @@ it('should handle root url', function (test) {
     test.done();
 });
 
+it('should allow to specify url helper name', function (test) {
+    var paths = [];
+    var map = new routes.Map(fakeApp(paths), fakeBridge());
+    map.get('/p/:id', 'posts#show', {as: 'post'});
+    test.deepEqual(paths, [
+        [ 'GET', '/p/:id', 'posts#show' ]
+    ]);
+    test.equal(map.pathTo.post(1), '/p/1');
+    test.done();
+});
+
