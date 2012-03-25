@@ -116,10 +116,10 @@ it('should allow overwrite path and helper', function (test) {
         [ 'PUT', '/pictures/:id.:format?', 'avatars#update' ],
         [ 'GET', '/pictures/:id.:format?', 'avatars#show' ]
     ]);
-    test.equal(map.pathTo.pictures, '/pictures');
-    test.equal(map.pathTo.new_picture, '/pictures/new');
-    test.equal(map.pathTo.edit_picture(1), '/pictures/1/edit');
-    test.equal(map.pathTo.picture(1602), '/pictures/1602');
+    test.equal(map.pathTo.images, '/pictures');
+    test.equal(map.pathTo.new_image, '/pictures/new');
+    test.equal(map.pathTo.edit_image(1), '/pictures/1/edit');
+    test.equal(map.pathTo.image(1602), '/pictures/1602');
     test.done();
 });
 
@@ -139,10 +139,13 @@ it('should allow to specify url helper name', function (test) {
     var paths = [];
     var map = new routes.Map(fakeApp(paths), fakeBridge());
     map.get('/p/:id', 'posts#show', {as: 'post'});
+    map.get('/p/:id/edit', 'posts#edit', {as: 'post_edit'});
     test.deepEqual(paths, [
-        [ 'GET', '/p/:id', 'posts#show' ]
+        [ 'GET', '/p/:id', 'posts#show' ],
+        [ 'GET', '/p/:id/edit', 'posts#edit' ]
     ]);
     test.equal(map.pathTo.post(1), '/p/1');
+    test.equal(map.pathTo.post_edit(1), '/p/1/edit');
     test.done();
 });
 
