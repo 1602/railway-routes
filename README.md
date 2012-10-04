@@ -58,6 +58,26 @@ In that case your handler should be:
 
 http://railwayjs.com/routing.html
 
+### Singleton resources
+
+To create a singleton resource, set the singleton_for property of the
+params hash to the resource you want the singleton resource to map to.
+
+Example usage:
+
+    map.resources('users');
+    map.resources('account', { 
+      singleton_for: 'users', 
+      middleware: function(req, res, next) {
+        // Set the id parameter since we don't get it from the URL
+        // like is usually the case for normal resources.
+        if(req.user)
+          req.params.id = req.user.id;
+        else 
+          return res.redirect('/login');
+        next(); 
+    }});
+
 ## Example app
 
 Check out [example app][1] to deal with middleware, route handling, and generic routes:
