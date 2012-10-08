@@ -76,7 +76,7 @@ Will generate the following routes:
 Singleton resources can also have nested resources. For example:
 
     map.resource('account', function(account) {
-      map.resources('posts');
+      account.resources('posts');
     });
 
 ## Example app
