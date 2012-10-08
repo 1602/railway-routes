@@ -60,23 +60,24 @@ http://railwayjs.com/routing.html
 
 ### Singleton resources
 
-To create a singleton resource, set the singleton_for property of the
-params hash to the resource you want the singleton resource to map to.
+Example:
 
-Example usage:
+    map.resource('account');
 
-    map.resources('users');
-    map.resources('account', { 
-      singleton_for: 'users', 
-      middleware: function(req, res, next) {
-        // Set the id parameter since we don't get it from the URL
-        // like is usually the case for normal resources.
-        if(req.user)
-          req.params.id = req.user.id;
-        else 
-          return res.redirect('/login');
-        next(); 
-    }});
+Will generate the following routes:
+
+    GET     /account        account#show
+    POST    /account        account#create
+    GET     /account/new    account#new
+    GET     /account/edit   account#edit
+    DELETE  /account        account#destroy
+    PUT     /account        account#update
+
+Singleton resources can also have nested resources. For example:
+
+    map.resource('account', function(account) {
+      account.resources('posts');
+    });
 
 ## Example app
 
