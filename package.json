@@ -3,7 +3,7 @@
   "name": "railway-routes",
   "description": "Resourceful routing for ExpressJS, ruby-on-rails 2 style",
   "tags": "express, routing, ror, rails, railway",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "homepage": "http://railwajs.com/routing.html",
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
     "express": "3.x"
   },
   "devDependencies": {
-    "nodeunit": "*"
+    "nodeunit": "*",
+    "semicov": "latest"
   }
 }
