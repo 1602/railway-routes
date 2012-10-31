@@ -1,5 +1,7 @@
-require('./spec_helper').init(module.exports);
-var routes = require('../lib/railway_routes');
+if (!process.env.TRAVIS) {
+    require('./spec_helper').init(module.exports);
+    var routes = require('../lib/railway_routes');
+}
 
 function fakeApp(container) {
     var app = {};
