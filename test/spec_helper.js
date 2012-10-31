@@ -1,3 +1,8 @@
+if (!process.env.TRAVIS) {
+    require('semicov').init('lib', 'Railway Routes'); // 'lib' is name of dir with code
+    process.on('exit', require('semicov').report);
+}
+
 var group_name = false, EXT_EXP;
 
 function it(should, test_case) {

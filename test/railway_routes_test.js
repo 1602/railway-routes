@@ -10,6 +10,7 @@ function fakeApp(container) {
             container.push(args);
         };
     });
+    app.set = function () {};
     return app;
 }
 
