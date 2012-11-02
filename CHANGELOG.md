@@ -19,6 +19,12 @@ Example:
 
     map.resource('account');
 
+### Additional param to disable appending ".format?"
+
+by Olivier Lalonde:
+
+    map.resource('users' , { path: ':username', appendFormat: false });
+
 Will generate the following routes:
 
     GET     /account        account#show
