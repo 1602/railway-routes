@@ -159,3 +159,10 @@ it('should handle question mark after param name', function (test) {
     test.equals(map.pathTo.test('param'), '/test/param');
     test.done();
 });
+
+it('should allow named parameters in url helpers', function (test) {
+    var map = new routes.Map(fakeApp([]), fakeBridge());
+    map.get('/testme/:p1/:p2', 'test#me');
+    test.equals(map.pathTo.testme({p1: 'hello', p2: 'world'}), '/testme/hello/world');
+    test.done();
+});
