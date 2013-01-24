@@ -1,6 +1,7 @@
 ## Description
 
-This is simple routing for ExpressJS framework. It allows you to write routes in Ruby on rails 2 style.
+This is simple routing for ExpressJS framework. It allows you to write
+resourceful routes.
 
 ## Using with Express
 
@@ -53,10 +54,18 @@ In that case your handler should be:
 - url helpers
 - namespaces
 - custom helper names / paths for resources
+- named parameters in url helpers
 
 ## Docs
 
-http://railwayjs.com/routing.html
+http://compoundjs.com/docs/#routing
+
+### Named route params
+
+Example:
+
+    map.get('/test/:param1/:param2', 'controller#action');
+    map.pathTo.test({param1: 'foo', param2: 'bar'}); // '/test/foo/bar'
 
 ### Singleton resources
 
