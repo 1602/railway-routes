@@ -166,3 +166,10 @@ it('should allow named parameters in url helpers', function (test) {
     test.equals(map.pathTo.testme({p1: 'hello', p2: 'world'}), '/testme/hello/world');
     test.done();
 });
+
+it('should allow to list objects with ids as params', function (test) {
+    var map = new routes.Map(fakeApp([]), fakeBridge());
+    map.get('/users/:user_id/posts/:id', 'test#me');
+    test.equals(map.pathTo.user_post({id: 4}, {id: 2}), '/users/4/posts/2');
+    test.done();
+});
