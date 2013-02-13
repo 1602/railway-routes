@@ -173,3 +173,41 @@ it('should allow to list objects with ids as params', function (test) {
     test.equals(map.pathTo.user_post({id: 4}, {id: 2}), '/users/4/posts/2');
     test.done();
 });
+
+it('should allow to specify manual helper name for resources', function (test) {
+    var paths = [];
+    var map = new routes.Map(fakeApp(paths), fakeBridge());
+    // singular helper
+    map.resources('users', {as: 'community', suffix: 'member'});
+    // plural helper
+    map.resources('cars', {as: 'vehicles'});
+    test.deepEqual(paths, [
+        [ 'GET', '/users.:format?', 'users#index' ],
+        [ 'POST', '/users.:format?', 'users#create' ],
+        [ 'GET', '/users/new.:format?', 'users#new' ],
+        [ 'GET', '/users/:id/edit.:format?', 'users#edit' ],
+        [ 'DELETE', '/users/:id.:format?', 'users#destroy' ],
+        [ 'PUT', '/users/:id.:format?', 'users#update' ],
+        [ 'GET', '/users/:id.:format?', 'users#show' ],
+
+        [ 'GET', '/cars.:format?', 'cars#index' ],
+        [ 'POST', '/cars.:format?', 'cars#create' ],
+        [ 'GET', '/cars/new.:format?', 'cars#new' ],
+        [ 'GET', '/cars/:id/edit.:format?', 'cars#edit' ],
+        [ 'DELETE', '/cars/:id.:format?', 'cars#destroy' ],
+        [ 'PUT', '/cars/:id.:format?', 'cars#update' ],
+        [ 'GET', '/cars/:id.:format?', 'cars#show' ]
+    ]);
+    test.deepEqual(Object.keys(map.pathTo), [
+        'community',
+        'new_community_member',
+        'edit_community_member',
+        'community_member',
+
+        'vehicles',
+        'new_vehicle',
+        'edit_vehicle',
+        'vehicle'
+    ]);
+    test.done();
+});
