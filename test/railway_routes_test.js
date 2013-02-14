@@ -266,3 +266,16 @@ it('should provide convenient api for collection-wide nested routes', function (
     );
     test.done();
 });
+
+it('should be optional to specify controller#action', function (test) {
+    var paths = [];
+    var map = new routes.Map(fakeApp(paths), fakeBridge());
+    map.resources('posts', function (post) {
+        post.get('commentsCount');
+        post.get('destroyAll', {collection: true});
+    });
+    test.equal(paths[0][2], 'posts#commentsCount');
+    test.equal(paths[1][1], '/posts/destroyAll');
+    test.equal(paths[1][2], 'posts#destroyAll');
+    test.done();
+});
