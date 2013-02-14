@@ -211,3 +211,24 @@ it('should allow to specify manual helper name for resources', function (test) {
     ]);
     test.done();
 });
+
+it('should only replace last collection_id when collection: true', function (test) {
+
+    var paths = [];
+    var map = new routes.Map(fakeApp(paths), fakeBridge());
+    map.resources('posts', function (post) {
+        post.resources('comments', function (comment) {
+            comment.get('report', 'comments#report');
+            comment.get('tag-with/:tag', 'comments#tag');
+            comment.get('reload', 'comments#reload', {collection: true});
+            comment.get('destroyAll/:filter', 'comments#destroyAll', {collection: true});
+        });
+    });
+    test.deepEqual(paths.slice(0, 4), [
+        [ 'GET', '/posts/:post_id/comments/:comment_id/report', 'comments#report' ],
+        [ 'GET', '/posts/:post_id/comments/:comment_id/tag-with/:tag', 'comments#tag' ],
+        [ 'GET', '/posts/:post_id/comments/reload', 'comments#reload' ],
+        [ 'GET', '/posts/:post_id/comments/destroyAll/:filter', 'comments#destroyAll' ]
+    ]);
+    test.done();
+});
