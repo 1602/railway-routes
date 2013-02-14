@@ -232,3 +232,37 @@ it('should only replace last collection_id when collection: true', function (tes
     ]);
     test.done();
 });
+
+it('should camelize helper names', function (test) {
+    var map = new routes.Map(fakeApp([]), fakeBridge());
+    map.camelCaseHelperNames = true;
+    map.resources('posts', function (post) {
+        post.resources('comments');
+    });
+    test.deepEqual(Object.keys(map.pathTo), [
+        'postComments',
+        'newPostComment',
+        'editPostComment',
+        'postComment',
+        'posts',
+        'newPost',
+        'editPost',
+        'post'
+    ]);
+    test.done();
+});
+
+it('should provide convenient api for collection-wide nested routes', function (test) {
+    var paths = [];
+    var map = new routes.Map(fakeApp(paths), fakeBridge());
+    map.resources('posts', function(post) {
+        post.collection(function(posts) {
+            posts.del('destroyAll', 'posts#destroyAll');
+        });
+    });
+    test.deepEqual(
+        paths[0].join(' '),
+        'DEL /posts/destroyAll posts#destroyAll'
+    );
+    test.done();
+});
