@@ -1,6 +1,9 @@
-require('./spec_helper').init(module.exports);
-var routes = require('../lib/railway_routes');
+if (!process.env.TRAVIS) {
+    require('semicov').init('lib', 'Railway Routes'); // 'lib' is name of dir with code
+    process.on('exit', require('semicov').report);
+}
 
+var routes = require('../');
 function fakeApp(container) {
     var app = {};
     ['get', 'post', 'put', 'del', 'delete', 'all'].forEach(function (m) {
@@ -20,9 +23,16 @@ function fakeBridge() {
     };
 }
 
-it('should produce routes for all methods', function (test) {
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+suite('Routing map');
+
+var paths, map;
+
+beforeEach(function() {
+    paths = [];
+    map = new routes.Map(fakeApp(paths), fakeBridge());
+});
+
+test('should produce routes for all methods', function() {
     map.get('/signin', 'session#new');
     map.post('/signin', 'session#create');
     map.del('/signout', 'session#destroy');
@@ -30,7 +40,7 @@ it('should produce routes for all methods', function (test) {
     map.put('/signup', 'users#create');
     map.all('/path', 'controller#action');
 
-    test.deepEqual(paths, [
+    paths.should.eql([
         [ 'GET', '/signin', 'session#new' ],
         [ 'POST', '/signin', 'session#create' ],
         [ 'DEL', '/signout', 'session#destroy' ],
@@ -38,19 +48,16 @@ it('should produce routes for all methods', function (test) {
         [ 'PUT', '/signup', 'users#create' ],
         [ 'ALL', '/path', 'controller#action' ]
     ]);
-    test.equal(map.pathTo.signin(), '/signin');
-    test.equal(map.pathTo.signin, '/signin');
-    test.equal(map.pathTo.signout(), '/signout');
-    test.equal(map.pathTo.signup(), '/signup');
-    test.equal(map.pathTo.path(), '/path');
-    test.done();
+    map.pathTo.signin().should.equal('/signin');
+    map.pathTo.signin.toString().should.equal('/signin');
+    map.pathTo.signout().should.equal('/signout');
+    map.pathTo.signup().should.equal('/signup');
+    map.pathTo.path().should.equal('/path');
 });
 
-it('should create resourceful routes', function (test) {
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+test('should create resourceful routes', function() {
     map.resources('users');
-    test.deepEqual(paths, [
+    paths.should.eql([
         [ 'GET', '/users.:format?', 'users#index' ],
         [ 'POST', '/users.:format?', 'users#create' ],
         [ 'GET', '/users/new.:format?', 'users#new' ],
@@ -59,35 +66,29 @@ it('should create resourceful routes', function (test) {
         [ 'PUT', '/users/:id.:format?', 'users#update' ],
         [ 'GET', '/users/:id.:format?', 'users#show' ]
     ]);
-    test.equal(map.pathTo.users(), '/users');
-    test.equal(map.pathTo.users, '/users');
-    test.equal(map.pathTo.new_user(), '/users/new');
-    test.equal(map.pathTo.new_user, '/users/new');
-    test.equal(map.pathTo.edit_user(1), '/users/1/edit');
-    test.equal(map.pathTo.user(2), '/users/2');
-    test.done();
+    map.pathTo.users().should.equal('/users');
+    map.pathTo.users.toString().should.equal('/users');
+    map.pathTo.new_user().should.equal('/users/new');
+    map.pathTo.new_user.toString().should.equal('/users/new');
+    map.pathTo.edit_user(1).should.equal('/users/1/edit');
+    map.pathTo.user(2).should.equal('/users/2');
 });
 
-it('should describe namespaced route', function (test) {
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+test('should describe namespaced route', function () {
     map.namespace('admin', function (admin) {
         admin.get('dashboard', 'dashboard#index');
     });
-    test.deepEqual(paths, [
+    paths.should.eql([
         [ 'GET', '/admin/dashboard', 'admin/dashboard#index' ]
     ]);
-    test.equal(map.pathTo.admin_dashboard(), '/admin/dashboard');
-    test.done();
+    map.pathTo.admin_dashboard().should.equal('/admin/dashboard');
 });
 
-it('should describe namespaced resource', function (test) {
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+test('should describe namespaced resource', function() {
     map.namespace('admin', function (admin) {
         admin.resources('pages');
     });
-    test.deepEqual(paths, [
+    paths.should.eql([
         [ 'GET', '/admin/pages.:format?', 'admin/pages#index' ],
         [ 'POST', '/admin/pages.:format?', 'admin/pages#create' ],
         [ 'GET', '/admin/pages/new.:format?', 'admin/pages#new' ],
@@ -96,19 +97,16 @@ it('should describe namespaced resource', function (test) {
         [ 'PUT', '/admin/pages/:id.:format?', 'admin/pages#update' ],
         [ 'GET', '/admin/pages/:id.:format?', 'admin/pages#show' ]
     ]);
-    test.equal(map.pathTo.admin_pages, '/admin/pages');
-    test.equal(map.pathTo.new_admin_page(), '/admin/pages/new');
-    test.equal(map.pathTo.new_admin_page, '/admin/pages/new');
-    test.equal(map.pathTo.edit_admin_page(1), '/admin/pages/1/edit');
-    test.equal(map.pathTo.admin_page(2), '/admin/pages/2');
-    test.done();
+    map.pathTo.admin_pages.toString().should.equal('/admin/pages');
+    map.pathTo.new_admin_page().should.equal('/admin/pages/new');
+    map.pathTo.new_admin_page.toString().should.equal('/admin/pages/new');
+    map.pathTo.edit_admin_page(1).should.equal('/admin/pages/1/edit');
+    map.pathTo.admin_page(2).should.equal('/admin/pages/2');
 });
 
-it('should allow overwrite path and helper', function (test) {
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+test('should allow to overwrite path and helper', function() {
     map.resources('avatars', {as: 'images', path: 'pictures'});
-    test.deepEqual(paths, [
+    paths.should.eql([
         [ 'GET', '/pictures.:format?', 'avatars#index' ],
         [ 'POST', '/pictures.:format?', 'avatars#create' ],
         [ 'GET', '/pictures/new.:format?', 'avatars#new' ],
@@ -117,71 +115,58 @@ it('should allow overwrite path and helper', function (test) {
         [ 'PUT', '/pictures/:id.:format?', 'avatars#update' ],
         [ 'GET', '/pictures/:id.:format?', 'avatars#show' ]
     ]);
-    test.equal(map.pathTo.images, '/pictures');
-    test.equal(map.pathTo.new_image, '/pictures/new');
-    test.equal(map.pathTo.edit_image(1), '/pictures/1/edit');
-    test.equal(map.pathTo.image(1602), '/pictures/1602');
-    test.done();
+    map.pathTo.images.toString().should.equal('/pictures');
+    map.pathTo.new_image.toString().should.equal('/pictures/new');
+    map.pathTo.edit_image(1).should.equal('/pictures/1/edit');
+    map.pathTo.image(1602).should.equal('/pictures/1602');
 });
 
-it('should handle root url', function (test) {
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+test('should handle root url', function() {
     map.root('dashboard#home');
-    test.deepEqual(paths, [
+    paths.should.eql([
         [ 'GET', '/', 'dashboard#home' ]
     ]);
-    test.equal(map.pathTo.root, '/');
-    test.equal(map.pathTo.root(), '/');
-    test.done();
+    map.pathTo.root.toString().should.equal('/');
+    map.pathTo.root().should.equal('/');
 });
 
-it('should allow to specify url helper name', function (test) {
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+test('should allow to specify url helper name', function() {
     map.get('/p/:id', 'posts#show', {as: 'post'});
     map.get('/p/:id/edit', 'posts#edit', {as: 'post_edit'});
-    test.deepEqual(paths, [
+    paths.should.eql([
         [ 'GET', '/p/:id', 'posts#show' ],
         [ 'GET', '/p/:id/edit', 'posts#edit' ]
     ]);
-    test.equal(map.pathTo.post(1), '/p/1');
-    test.equal(map.pathTo.post_edit(1), '/p/1/edit');
-    test.done();
+    map.pathTo.post(1).should.equal('/p/1');
+    map.pathTo.post_edit(1).should.equal('/p/1/edit');
 });
 
-it('should handle question mark after param name', function (test) {
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+test('should handle question mark after param name', function() {
     map.get('/test/:p1?', 'test#test');
-    test.equals(map.pathTo.test(), '/test');
-    test.equals(map.pathTo.test(''), '/test');
-    test.equals(map.pathTo.test('param'), '/test/param');
-    test.done();
+    map.pathTo.test().should.equal('/test');
+    map.pathTo.test('').should.equal('/test');
+    map.pathTo.test('param').should.equal('/test/param');
 });
 
-it('should allow named parameters in url helpers', function (test) {
-    var map = new routes.Map(fakeApp([]), fakeBridge());
+test('should allow named parameters in url helpers', function () {
     map.get('/testme/:p1/:p2', 'test#me');
-    test.equals(map.pathTo.testme({p1: 'hello', p2: 'world'}), '/testme/hello/world');
-    test.done();
+    map.pathTo.testme({
+        p1: 'hello',
+        p2: 'world'
+    }).should.eql('/testme/hello/world');
 });
 
-it('should allow to list objects with ids as params', function (test) {
-    var map = new routes.Map(fakeApp([]), fakeBridge());
+test('should allow to list objects with ids as params', function () {
     map.get('/users/:user_id/posts/:id', 'test#me');
-    test.equals(map.pathTo.user_post({id: 4}, {id: 2}), '/users/4/posts/2');
-    test.done();
+    map.pathTo.user_post({id: 4}, {id: 2}).should.equal('/users/4/posts/2');
 });
 
-it('should allow to specify manual helper name for resources', function (test) {
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+test('should allow to specify manual helper name for resources', function () {
     // singular helper
     map.resources('users', {as: 'community', suffix: 'member'});
     // plural helper
     map.resources('cars', {as: 'vehicles'});
-    test.deepEqual(paths, [
+    paths.should.eql([
         [ 'GET', '/users.:format?', 'users#index' ],
         [ 'POST', '/users.:format?', 'users#create' ],
         [ 'GET', '/users/new.:format?', 'users#new' ],
@@ -198,7 +183,7 @@ it('should allow to specify manual helper name for resources', function (test) {
         [ 'PUT', '/cars/:id.:format?', 'cars#update' ],
         [ 'GET', '/cars/:id.:format?', 'cars#show' ]
     ]);
-    test.deepEqual(Object.keys(map.pathTo), [
+    Object.keys(map.pathTo).should.eql([
         'community',
         'new_community_member',
         'edit_community_member',
@@ -209,13 +194,9 @@ it('should allow to specify manual helper name for resources', function (test) {
         'edit_vehicle',
         'vehicle'
     ]);
-    test.done();
 });
 
-it('should only replace last collection_id when collection: true', function (test) {
-
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+test('should only replace last collection_id when collection: true', function() {
     map.resources('posts', function (post) {
         post.resources('comments', function (comment) {
             comment.get('report', 'comments#report');
@@ -224,22 +205,20 @@ it('should only replace last collection_id when collection: true', function (tes
             comment.get('destroyAll/:filter', 'comments#destroyAll', {collection: true});
         });
     });
-    test.deepEqual(paths.slice(0, 4), [
+    paths.slice(0, 4).should.eql([
         [ 'GET', '/posts/:post_id/comments/:comment_id/report', 'comments#report' ],
         [ 'GET', '/posts/:post_id/comments/:comment_id/tag-with/:tag', 'comments#tag' ],
         [ 'GET', '/posts/:post_id/comments/reload', 'comments#reload' ],
         [ 'GET', '/posts/:post_id/comments/destroyAll/:filter', 'comments#destroyAll' ]
     ]);
-    test.done();
 });
 
-it('should camelize helper names', function (test) {
-    var map = new routes.Map(fakeApp([]), fakeBridge());
+test('should camelize helper names', function() {
     map.camelCaseHelperNames = true;
     map.resources('posts', function (post) {
         post.resources('comments');
     });
-    test.deepEqual(Object.keys(map.pathTo), [
+    Object.keys(map.pathTo).should.eql([
         'postComments',
         'newPostComment',
         'editPostComment',
@@ -249,33 +228,23 @@ it('should camelize helper names', function (test) {
         'editPost',
         'post'
     ]);
-    test.done();
 });
 
-it('should provide convenient api for collection-wide nested routes', function (test) {
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+test('should provide convenient api for collection-wide nested routes', function() {
     map.resources('posts', function(post) {
         post.collection(function(posts) {
             posts.del('destroyAll', 'posts#destroyAll');
         });
     });
-    test.deepEqual(
-        paths[0].join(' '),
-        'DEL /posts/destroyAll posts#destroyAll'
-    );
-    test.done();
+    paths[0].join(' ').should.equal('DEL /posts/destroyAll posts#destroyAll');
 });
 
-it('should be optional to specify controller#action', function (test) {
-    var paths = [];
-    var map = new routes.Map(fakeApp(paths), fakeBridge());
+test('should be optional to specify controller#action', function () {
     map.resources('posts', function (post) {
         post.get('commentsCount');
         post.get('destroyAll', {collection: true});
     });
-    test.equal(paths[0][2], 'posts#commentsCount');
-    test.equal(paths[1][1], '/posts/destroyAll');
-    test.equal(paths[1][2], 'posts#destroyAll');
-    test.done();
+    paths[0][2].should.equal('posts#commentsCount');
+    paths[1][1].should.equal('/posts/destroyAll');
+    paths[1][2].should.equal('posts#destroyAll');
 });

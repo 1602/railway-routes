@@ -20,7 +20,8 @@
     "express": "3.x"
   },
   "devDependencies": {
-    "nodeunit": "*",
-    "semicov": "latest"
+    "mocha": "1.8.1",
+    "should": "1.2.2",
+    "semicov": "0.1.1"
   }
 }
