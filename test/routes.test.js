@@ -248,3 +248,11 @@ test('should be optional to specify controller#action', function () {
     paths[1][1].should.equal('/posts/destroyAll');
     paths[1][2].should.equal('posts#destroyAll');
 });
+
+test('should clone object with prefix', function() {
+    map.get('/test/url', 'test#url', {as: 'testUrl'});
+    var clone = map.clone('prefix');
+    map.pathTo.testUrl().should.equal('/test/url');
+    map.pathTo.testUrl().should.equal('/test/url');
+    clone.testUrl().should.equal('/prefix/test/url');
+});
