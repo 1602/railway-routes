@@ -254,5 +254,5 @@ test('should clone object with prefix', function() {
     var clone = map.clone('prefix');
     map.pathTo.testUrl().should.equal('/test/url');
     map.pathTo.testUrl().should.equal('/test/url');
-    clone.testUrl().should.equal('/prefix/test/url');
+    clone.testUrl().should.equal('prefix/test/url');
 });
