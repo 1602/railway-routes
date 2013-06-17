@@ -251,7 +251,7 @@ test('should be optional to specify controller#action', function () {
 
 test('should clone object with prefix', function() {
     map.get('/test/url', 'test#url', {as: 'testUrl'});
-    var clone = map.clone('prefix');
+    var clone = map.clone('/prefix');
     map.pathTo.testUrl().should.equal('/test/url');
     map.pathTo.testUrl().should.equal('/test/url');
     clone.testUrl().should.equal('/prefix/test/url');
