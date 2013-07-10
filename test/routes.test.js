@@ -256,3 +256,13 @@ test('should clone object with prefix', function() {
     map.pathTo.testUrl().should.equal('/test/url');
     clone.testUrl().should.equal('/prefix/test/url');
 });
+
+test('should filter resources when only specified', function() {
+    map.resources('users', {only: ['index', 'show', 'new', 'create']});
+    paths.should.have.lengthOf(4);
+    // check order
+    paths[0][2].should.equal('users#index');
+    paths[1][2].should.equal('users#create');
+    paths[2][2].should.equal('users#new');
+    paths[3][2].should.equal('users#show');
+});
