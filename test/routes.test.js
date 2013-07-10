@@ -266,3 +266,12 @@ test('should filter resources when only specified', function() {
     paths[2][2].should.equal('users#new');
     paths[3][2].should.equal('users#show');
 });
+
+test('should override controller name using resources->controller', function() {
+    map.resources('links', {only: 'show', controller: 'collectionLinks'});
+    map.namespace('collection', function(controller) {
+        map.resources('links', {only: 'show', controller: 'collectionLinks'});
+    });
+    paths[0][2].should.equal('collectionLinks#show');
+    paths[1][2].should.equal('collection/collectionLinks#show');
+});
